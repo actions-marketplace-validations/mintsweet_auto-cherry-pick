@@ -5,12 +5,20 @@ branding:
   icon: "git-pull-request"
   color: "green"
 inputs:
+  trigger_label_prefix:
+    description: "The trigger label prefic"
+    default: "needs-cherry-pick-"
+    required: false
   author_email:
     description: "The author email address"
     default: ${{ github.actor }}@users.noreply.github.com
     required: false
   author_name:
     description: "The author name"
+    default: ${{ github.actor }}
+    required: false
+  assignees:
+    description: "A comma or newline separated list of assignees (GitHub usernames)."
     default: ${{ github.actor }}
     required: false
 runs:
@@ -22,10 +30,10 @@ runs:
       shell: bash
       env:
         GH_TOKEN: ${{ github.token }}
-        PR_NUMBER: ${{ github.event.pull_request.number }}
-        PR_TITLE: ${{ github.event.pull_request.title }}
-        PR_BODY: ${{ github.event.pull_request.body }}
-        LABEL_NAME: ${{ github.event.label.name }}
+        ORIGIN_PR_NUMBER: ${{ github.event.pull_request.number }}
+        ORIGIN_PR_TITLE: ${{ github.event.pull_request.title }}
+        ORIGIN_PR_LABELS_JSON: ${{ toJson(github.event.pull_request.labels.*.name) }}
+        TRIGER_LABEL_PREFIX: ${{ inputs.trigger_label_prefix }}
         AUTHOR_EMAIL: ${{ inputs.author_email }}
         AUTHOR_NAME: ${{ inputs.author_name }}
         ASSIGNEES: ${{ inputs.assignees }}
